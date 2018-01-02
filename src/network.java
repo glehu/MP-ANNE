@@ -11,16 +11,10 @@ class network
 	public network()
 	{
 		System.out.println(">>> network()\n");
-
-		// E.g. {1, 2, 1} 1 input neuron 2 neurons in 1st hidden layer 1 output neuron
-		int[] shape = new int[]{1, 2, 1};
-
-		setupNetwork(shape);
-
-		feedForward();
 	}
 
-	private void setupNetwork(int[] shape)
+	// Creates a network of neurons and connections, with a user defined shape of the network (see network())
+	void setupNetwork(int[] shape)
 	{
 		System.out.println(String.format(">>> setupNetwork(%s)\n", Arrays.toString(shape)));
 
@@ -80,7 +74,8 @@ class network
 				numNeurons, numConnections));
 	}
 
-	public void feedForward()
+	// Passes the values of the input neurons to the connected neurons with respect of the connections' weight
+	void feedForward()
 	{
 		System.out.println("\n>>> feedForward()\n");
 

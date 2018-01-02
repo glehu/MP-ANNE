@@ -7,11 +7,13 @@ import java.util.ArrayList;
 class neuron
 {
 	ArrayList<connection> in, out;
-	public float value;
-	public boolean input, output;
+
+	float value;
+
+	private boolean input, output;
 
 	int layer; // X
-	int pos; // Y
+	int pos;   // Y
 
 	// -------------------------------------------
 
@@ -80,7 +82,7 @@ class neuron
 		value = relu(false);
 	}
 
-	public void feedForward()
+	void feedForward()
 	{
 		calculate();
 
