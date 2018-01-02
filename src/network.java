@@ -16,6 +16,8 @@ class network
 		int[] shape = new int[]{1, 2, 1};
 
 		setupNetwork(shape);
+
+		feedForward();
 	}
 
 	private void setupNetwork(int[] shape)
@@ -42,7 +44,8 @@ class network
 				if (i == 0) // First layer -> Input neuron
 				{
 					n = new neuron(i, j, 1);
-					System.out.println(String.format("\t\tINPUT (%d/%d) added.", n.layer, n.pos));
+					System.out.println(String.format("\t\tINPUT  (%d/%d) added. (Value: %f)",
+							n.layer, n.pos, n.value));
 				} else if (i == layers - 1) // Last layer -> Output neuron
 				{
 					n = new neuron(i, j, true);
@@ -67,13 +70,26 @@ class network
 						previous.out.add(c);
 						n.in.add(c);
 
-						System.out.println(String.format("\t\t\t(%d/%d) connected to (%d/%d)",
-								previous.layer, previous.pos, n.layer, n.pos));
+						System.out.println(String.format("\t\t\t(%d/%d) connected to (%d/%d) with weight %+f",
+								previous.layer, previous.pos, n.layer, n.pos, c.weight));
 					}
 				}
 			}
 		}
 		System.out.println(String.format("\n\tTotal neurons:\t\t%,d\n\tTotal connections:\t%,d",
 				numNeurons, numConnections));
+	}
+
+	public void feedForward()
+	{
+		System.out.println("\n>>> feedForward()\n");
+
+		for (neuron[] aNetwork : network)
+		{
+			for (neuron n : aNetwork)
+			{
+				n.feedForward();
+			}
+		}
 	}
 }

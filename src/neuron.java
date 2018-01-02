@@ -64,7 +64,7 @@ class neuron
 		value += x;
 	}
 
-	private float relu(boolean derivative)
+	public float relu(boolean derivative)
 	{
 		if (derivative)
 		{
@@ -72,6 +72,27 @@ class neuron
 		} else
 		{
 			return Math.max(0, value);
+		}
+	}
+
+	private void calculate()
+	{
+		value = relu(false);
+	}
+
+	public void feedForward()
+	{
+		calculate();
+
+		if(out.size() > 0) // Input or hidden neuron
+		{
+			for (connection c : out)
+			{
+				c.feed(value);
+			}
+		} else // Output neuron
+		{
+			System.out.println(String.format("\tOutput Neuron (%d/%d) = %f", layer, pos, value));
 		}
 	}
 }
