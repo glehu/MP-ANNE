@@ -12,7 +12,7 @@ class network
 	{
 		System.out.println(">>> network()\n");
 
-		int[] shape = new int[]{1, 2, 1};    // 1 input neuron 2 neurons in 1st hidden layer 1 output neuron
+		int[] shape = new int[]{1, 2, 10};    // 1 input neuron 2 neurons in 1st hidden layer 1 output neuron
 
 		setupNetwork(shape);
 	}
@@ -40,15 +40,15 @@ class network
 				if (i == 0) // Input neuron
 				{
 					n = new neuron(i, j, 1);
-					System.out.println("\t\t(INPUT) added.");
+					System.out.println(String.format("\t\tINPUT (%d/%d) added.", n.layer, n.pos));
 				} else if (i == layers - 1) // Output neuron
 				{
 					n = new neuron(i, j, true);
-					System.out.println("\t\t(OUTPUT) added.");
+					System.out.println(String.format("\t\tOUTPUT (%d/%d) added.", n.layer, n.pos));
 				} else // Hidden neuron
 				{
 					n = new neuron(i, j);
-					System.out.println("\t\t(HIDDEN) added.");
+					System.out.println(String.format("\t\tHIDDEN (%d/%d) added.", n.layer, n.pos));
 				}
 
 				network[i][j] = n; // Adding the neuron to the network
@@ -71,7 +71,7 @@ class network
 				}
 			}
 		}
-		System.out.println(String.format("\tTotal neurons:\t\t%d\n\tTotal connections:\t%d",
+		System.out.println(String.format("\n\tTotal neurons:\t\t%,d\n\tTotal connections:\t%,d",
 				numNeurons, numConnections));
 	}
 }
