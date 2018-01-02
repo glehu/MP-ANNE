@@ -3,18 +3,19 @@ import java.util.ArrayList;
 /**
  * Created by duffy on 02.01.2018.
  */
-public class neuron
+
+class neuron
 {
 	ArrayList<connection> in, out;
-	float value;
-	boolean input, output;
+	public float value;
+	public boolean input, output;
 
 	int layer; // X
 	int pos; // Y
 
 	// -------------------------------------------
 
-	public neuron(int layer, int pos, int value)      // INPUT
+	neuron(int layer, int pos, int value)      // INPUT
 	{
 		this.in  = new ArrayList<connection>();
 		this.out = new ArrayList<connection>();
@@ -28,7 +29,7 @@ public class neuron
 		this.pos   = pos;
 	}
 
-	public neuron(int layer, int pos)               // HIDDEN
+	neuron(int layer, int pos)               // HIDDEN
 	{
 		this.in  = new ArrayList<connection>();
 		this.out = new ArrayList<connection>();
@@ -42,7 +43,7 @@ public class neuron
 		this.pos   = pos;
 	}
 
-	public neuron(int layer, int pos, boolean output) // OUTPUT
+	neuron(int layer, int pos, boolean output) // OUTPUT
 	{
 		this.in  = new ArrayList<connection>();
 		this.out = new ArrayList<connection>();
@@ -63,7 +64,7 @@ public class neuron
 		value += x;
 	}
 
-	float relu(boolean derivative)
+	private float relu(boolean derivative)
 	{
 		if (derivative)
 		{

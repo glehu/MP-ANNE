@@ -3,9 +3,10 @@ import java.util.Arrays;
 /**
  * Created by duffy on 02.01.2018.
  */
-public class network
+
+class network
 {
-	neuron[][] network; // List of neurons in the network [#layers][#neurons per layer]
+	private neuron[][] network; // List of neurons in the network [#layers][#neurons per layer]
 
 	public network()
 	{

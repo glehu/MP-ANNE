@@ -3,11 +3,12 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by duffy on 02.01.2018.
  */
-public class connection
-{
-	neuron from, to;
 
-	float weight;
+class connection
+{
+	public neuron from, to;
+
+	public float weight;
 
 	public connection(neuron from, neuron to)
 	{
