@@ -12,19 +12,21 @@ class network
 	{
 		System.out.println(">>> network()\n");
 
-		int[] shape = new int[]{1, 2, 10};    // 1 input neuron 2 neurons in 1st hidden layer 1 output neuron
+		// E.g. {1, 2, 1} 1 input neuron 2 neurons in 1st hidden layer 1 output neuron
+		int[] shape = new int[]{1, 2, 1};
 
 		setupNetwork(shape);
 	}
 
 	private void setupNetwork(int[] shape)
 	{
+		System.out.println(String.format(">>> setupNetwork(%s)\n", Arrays.toString(shape)));
+
 		int numNeurons = 0; // Total neurons in the network
 		int numConnections = 0; // Total connections
 
-		System.out.println(String.format(">>> setupNetwork(%s)\n", Arrays.toString(shape)));
-		neuron n; // Neuron to be filled into the network (temp object)
-		connection c; // Connection (link) between the neurons
+		neuron n; // Neuron to be filled into the network
+		connection c; // Connection (link) between two neurons
 
 		int layers = shape.length;
 		network = new neuron[layers][];
@@ -37,15 +39,15 @@ class network
 
 			for (int j = 0; j < neurons; j++) // Filling the layers
 			{
-				if (i == 0) // Input neuron
+				if (i == 0) // First layer -> Input neuron
 				{
 					n = new neuron(i, j, 1);
 					System.out.println(String.format("\t\tINPUT (%d/%d) added.", n.layer, n.pos));
-				} else if (i == layers - 1) // Output neuron
+				} else if (i == layers - 1) // Last layer -> Output neuron
 				{
 					n = new neuron(i, j, true);
 					System.out.println(String.format("\t\tOUTPUT (%d/%d) added.", n.layer, n.pos));
-				} else // Hidden neuron
+				} else // Layer(s) between first and last -> Hidden neuron
 				{
 					n = new neuron(i, j);
 					System.out.println(String.format("\t\tHIDDEN (%d/%d) added.", n.layer, n.pos));
