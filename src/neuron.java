@@ -9,9 +9,12 @@ public class neuron
 	float value;
 	boolean input, output;
 
+	int layer; // X
+	int pos; // Y
+
 	// -------------------------------------------
 
-	public neuron(int value)      // INPUT
+	public neuron(int layer, int pos, int value)      // INPUT
 	{
 		this.in  = new ArrayList<connection>();
 		this.out = new ArrayList<connection>();
@@ -20,9 +23,12 @@ public class neuron
 
 		this.input  = true;
 		this.output = false;
+
+		this.layer = layer;
+		this.pos   = pos;
 	}
 
-	public neuron()               // HIDDEN
+	public neuron(int layer, int pos)               // HIDDEN
 	{
 		this.in  = new ArrayList<connection>();
 		this.out = new ArrayList<connection>();
@@ -31,9 +37,12 @@ public class neuron
 
 		this.input  = false;
 		this.output = false;
+
+		this.layer = layer;
+		this.pos   = pos;
 	}
 
-	public neuron(boolean output) // OUTPUT
+	public neuron(int layer, int pos, boolean output) // OUTPUT
 	{
 		this.in  = new ArrayList<connection>();
 		this.out = new ArrayList<connection>();
@@ -42,6 +51,9 @@ public class neuron
 
 		this.input  = false;
 		this.output = true;
+
+		this.layer = layer;
+		this.pos   = pos;
 	}
 
 	// ---------------------------------------------
