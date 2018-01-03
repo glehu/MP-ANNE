@@ -18,53 +18,24 @@ class neuron
 	float inputD_total; // Total error derivative 	   w/ respect to node input
 	float numInputD;    // Number of error derivatives w/ respect to node input
 
-	private boolean is_input, is_output;
+	boolean is_input, is_output;
 
 	int layer; // X
 	int pos;   // Y
 
 	// -------------------------------------------
 
-	neuron(int layer, int pos, int value)      // INPUT
-	{
-		this.in  = new ArrayList<>();
-		this.out = new ArrayList<>();
-
-		this.output = value;
-		this.bias = 0.1f;
-
-		this.is_input  = true;
-		this.is_output = false;
-
-		this.layer = layer;
-		this.pos   = pos;
-	}
-
-	neuron(int layer, int pos)               // HIDDEN
+	neuron(int layer, int pos, boolean is_input, boolean is_output)
 	{
 		this.in  = new ArrayList<>();
 		this.out = new ArrayList<>();
 
 		this.totalInput = 0;
-		this.bias = 0.1f;
+		this.output 	= 0;
+		this.bias 		= 0.1f;
 
-		this.is_input  = false;
-		this.is_output = false;
-
-		this.layer = layer;
-		this.pos   = pos;
-	}
-
-	neuron(int layer, int pos, boolean output) // OUTPUT
-	{
-		this.in  = new ArrayList<>();
-		this.out = new ArrayList<>();
-
-		this.totalInput = 0;
-		this.bias = 0.1f;
-
-		this.is_input  = false;
-		this.is_output = true;
+		this.is_input  = is_input;
+		this.is_output = is_output;
 
 		this.layer = layer;
 		this.pos   = pos;
@@ -83,7 +54,7 @@ class neuron
 		}
 	}
 
-	float calculate()
+	void calculate()
 	{
 		totalInput = bias;
 		for(connection c : in)
@@ -91,7 +62,6 @@ class neuron
 			totalInput += c.weight * c.from.output;
 		}
 		output = relu(false, totalInput);
-		return output;
 	}
 }
 

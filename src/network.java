@@ -39,16 +39,16 @@ class network
 			{
 				if (i == 0) // First layer -> Input neuron
 				{
-					n = new neuron(i, j, 1);
+					n = new neuron(i, j, true, false);
 					System.out.println(String.format("\t\tINPUT  (%d/%d) added. (Value: %f)",
 							n.layer, n.pos, n.totalInput));
 				} else if (i == layers - 1) // Last layer -> Output neuron
 				{
-					n = new neuron(i, j, true);
+					n = new neuron(i, j, false, true);
 					System.out.println(String.format("\t\tOUTPUT (%d/%d) added.", n.layer, n.pos));
 				} else // Layer(s) between first and last -> Hidden neuron
 				{
-					n = new neuron(i, j);
+					n = new neuron(i, j, false, false);
 					System.out.println(String.format("\t\tHIDDEN (%d/%d) added.", n.layer, n.pos));
 				}
 
@@ -74,24 +74,10 @@ class network
 		}
 		System.out.println(String.format("\n\tTotal neurons:\t\t%,d\n\tTotal connections:\t%,d\n",
 				numNeurons, numConnections));
-
-		feedForward();
-		backProp(1);
-
-		for (int out = 0; out < network[network.length - 1].length; out++)
-		{
-			neuron nn = network[network.length - 1][out];
-			System.out.println(String.format("(%d/%d) ERROR: %+f", nn.layer, nn.pos, nn.outputD));
-			System.out.println(String.format("Output %+f", nn.output));
-			for (connection cc : nn.in)
-			{
-				System.out.println(String.format("%+f", cc.weight));
-			}
-		}
 	}
 
 	// Passes the values of the input neurons to the connected neurons with respect of the connections' weight
-	void feedForward()
+	private void feedForward()
 	{
 		for (int i = 1; i < network.length; i++)
 		{
@@ -105,7 +91,7 @@ class network
 
 	// Backward Propagation
 	// Here, the error of the neurons and connections are calculated and the weights get updated
-	void backProp(float truth)
+	private void backProp(float truth)
 	{
 		// Calculating the error of the output neurons
 		for (int outputneurons = 0; outputneurons < network[network.length - 1].length; outputneurons++)
@@ -160,14 +146,13 @@ class network
 	// The learningRate describes how strong the weights' adjustment is.
 	// It is recommended to use a higher learningRate at the beginning that decreases with each epoch.
 	// This allows for a rapid leaning process at the beginning and fine adjustments at the end.
-	void updateWeights(float learningRate)
+	private void updateWeights(float learningRate)
 	{
 		for (int i = 1; i < network.length; i++)
 		{
 			neuron[] currentLayer = network[i];
-			for (int j = 0; j < currentLayer.length; j++)
+			for (neuron n : currentLayer)
 			{
-				neuron n = currentLayer[j];
 				if (n.numInputD > 0)
 				{
 					n.bias -= learningRate * n.inputD_total / n.numInputD;
@@ -186,11 +171,10 @@ class network
 			}
 		}
 
-		for (int i = 0; i < network.length; i++)
+		for (neuron[] aNetwork : network)
 		{
-			for (int j = 0; j < network[i].length; j++)
+			for (neuron n : aNetwork)
 			{
-				neuron n = network[i][j];
 				n.totalInput = n.bias;
 			}
 		}
@@ -224,7 +208,7 @@ class network
 					System.out.println(String.format("\n\t(%d/%d) ERROR: %+f", n.layer, n.pos, n.outputD));
 					System.out.println(String.format("\tACTUAL: %+f TRUTH: %+f", n.output, truth));
 					System.out.println(String.format("\tBIAS: %+f", n.bias));
-					for(connection c : n.in)
+					for (connection c : n.in)
 					{
 						System.out.println(String.format("\tWEIGHT: %+f", c.weight));
 					}
