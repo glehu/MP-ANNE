@@ -10,7 +10,7 @@ class neuron
 
 	float totalInput;
 	float output;
-	private float bias;
+	float bias;
 
 	// Backward Propagation stuff
 	float outputD;      // Error derivative w/ respect to node output
@@ -30,8 +30,8 @@ class neuron
 		this.in  = new ArrayList<>();
 		this.out = new ArrayList<>();
 
-		this.totalInput = value;
-		this.bias = 0;
+		this.output = value;
+		this.bias = 0.1f;
 
 		this.is_input  = true;
 		this.is_output = false;
@@ -46,7 +46,7 @@ class neuron
 		this.out = new ArrayList<>();
 
 		this.totalInput = 0;
-		this.bias = 0;
+		this.bias = 0.1f;
 
 		this.is_input  = false;
 		this.is_output = false;
@@ -61,7 +61,7 @@ class neuron
 		this.out = new ArrayList<>();
 
 		this.totalInput = 0;
-		this.bias = 0;
+		this.bias = 0.1f;
 
 		this.is_input  = false;
 		this.is_output = true;
@@ -72,41 +72,26 @@ class neuron
 
 	// ---------------------------------------------
 
-	void input(float x)
-	{
-		totalInput += x;
-	}
-
-	float relu(boolean derivative)
+	float relu(boolean derivative, float value)
 	{
 		if (derivative)
 		{
 			return 1;
 		} else
 		{
-			return Math.max(0, totalInput);
+			return Math.max(0, value);
 		}
 	}
 
-	private void calculate()
+	float calculate()
 	{
-		output = relu(false) + bias;
-	}
-
-	void feedForward()
-	{
-		calculate();
-
-		if (out.size() > 0) // Input or hidden neuron
+		totalInput = bias;
+		for(connection c : in)
 		{
-			for (connection c : out)
-			{
-				c.feed(output);
-			}
-		} else // Output neuron
-		{
-			System.out.println(String.format("\tOutput Neuron (%d/%d) = %f", layer, pos, output));
+			totalInput += c.weight * c.from.output;
 		}
+		output = relu(false, totalInput);
+		return output;
 	}
 }
 

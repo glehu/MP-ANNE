@@ -70,58 +70,66 @@ class network
 				}
 			}
 		}
-		System.out.println(String.format("\n\tTotal neurons:\t\t%,d\n\tTotal connections:\t%,d",
+		System.out.println(String.format("\n\tTotal neurons:\t\t%,d\n\tTotal connections:\t%,d\n",
 				numNeurons, numConnections));
+
+		feedForward();
+		backProp(1);
+
+		for (int out = 0; out < network[network.length - 1].length; out++)
+		{
+			neuron nn = network[network.length - 1][out];
+			System.out.println(String.format("(%d/%d) ERROR: %+f", nn.layer, nn.pos, nn.outputD));
+			System.out.println(String.format("Output %+f", nn.output));
+			for (connection cc : nn.in)
+			{
+				System.out.println(String.format("%+f", cc.weight));
+			}
+		}
 	}
 
 	// Passes the values of the input neurons to the connected neurons with respect of the connections' weight
 	void feedForward()
 	{
-		System.out.println("\n>>> feedForward()\n");
-
-		for (neuron[] aNetwork : network)
+		for (int i = 1; i < network.length; i++)
 		{
-			for (neuron n : aNetwork)
+			neuron[] currentLayer = network[i];
+			for (neuron n : currentLayer)
 			{
-				n.feedForward();
+				n.calculate();
 			}
 		}
 	}
 
 	// Backward Propagation
 	// Here, the error of the neurons and connections are calculated and the weights get updated
-	// TODO: Update the neurons' bias
 	void backProp(float truth)
 	{
-		System.out.println(String.format("\n>>> backProp(%f)\n", truth));
-
 		// Calculating the error of the output neurons
-		for(int outputneurons = 0; outputneurons < network[network.length-1].length; outputneurons++)
+		for (int outputneurons = 0; outputneurons < network[network.length - 1].length; outputneurons++)
 		{
-			neuron n = network[network.length-1][outputneurons];
+			neuron n = network[network.length - 1][outputneurons];
 
 			n.outputD = truth - n.output;
-			System.out.println(String.format("\tOutput Neuron (%d/%d) ERROR = %+f",
-					n.layer, n.pos, n.outputD));
 		}
 
-		for(int i = network.length - 1; i >= 1; i--)
+		for (int i = network.length - 1; i >= 1; i--)
 		{
 			// Node input error derivatives
-			for(int j = 0; j < network[i].length; j++)
+			for (int j = 0; j < network[i].length; j++)
 			{
 				neuron n = network[i][j];
 
-				n.inputD = n.outputD * n.relu(true);
+				n.inputD = n.outputD * n.relu(true, n.totalInput);
 				n.inputD_total += n.inputD;
 				n.numInputD++;
 			}
 
 			// Connection error derivatives
-			for(int j = 0; j < network[i].length; j++)
+			for (int j = 0; j < network[i].length; j++)
 			{
 				neuron n = network[i][j];
-				for(connection c : n.in)
+				for (connection c : n.in)
 				{
 					c.errorD = n.inputD * c.from.output;
 					c.errorD_total += c.errorD;
@@ -130,11 +138,11 @@ class network
 			}
 
 			// Error derivative with respect to each node's output.
-			if(i == 1) // Input neurons don't need to calculate the error (they can't be "wrong")
+			if (i == 1) // Input neurons don't need to calculate the error (they can't be "wrong")
 			{
 				continue;
 			}
-			neuron[] prevLayer = network[i-1];
+			neuron[] prevLayer = network[i - 1];
 			for (neuron n : prevLayer)
 			{
 				n.outputD = 0;
@@ -146,12 +154,70 @@ class network
 		}
 	}
 
-	// Update the connections' weights to approach (truth - actual = 0) => Learning process
+	// Update the connections' weights and the nodes' bias to approach (truth - actual = 0)
 	// The learningRate describes how strong the weights' adjustment is.
 	// It is recommended to use a higher learningRate at the beginning that decreases with each epoch.
 	// This allows for a rapid leaning process at the beginning and fine adjustments at the end.
 	void updateWeights(float learningRate)
 	{
-		
+		for (int i = 1; i < network.length; i++)
+		{
+			neuron[] currentLayer = network[i];
+			for (int j = 0; j < currentLayer.length; j++)
+			{
+				neuron n = currentLayer[j];
+				if (n.numInputD > 0)
+				{
+					n.bias -= learningRate * n.inputD_total / n.numInputD;
+					n.inputD_total = 0;
+					n.numInputD = 0;
+				}
+				for (connection c : n.in)
+				{
+					if (c.numErrorD > 0)
+					{
+						c.weight = c.weight + (learningRate / c.numErrorD) * c.errorD_total;
+						c.errorD_total = 0;
+						c.numErrorD = 0;
+					}
+				}
+			}
+		}
+
+		for (int i = 0; i < network.length; i++)
+		{
+			for (int j = 0; j < network[i].length; j++)
+			{
+				neuron n = network[i][j];
+				n.totalInput = n.bias;
+			}
+		}
+	}
+
+	void start(int epochs, float truth, float learningRate)
+	{
+		for (int i = 0; i < epochs; i++)
+		{
+			float error = 0;
+
+			feedForward();
+			backProp(truth);
+			updateWeights(learningRate);
+
+			for (int out = 0; out < network[network.length - 1].length; out++)
+			{
+				neuron n = network[network.length - 1][out];
+				System.out.println(String.format("\n(%d/%d) ERROR: %+f", n.layer, n.pos, n.outputD));
+				System.out.println(String.format("Output %+f", n.output));
+
+				error += n.outputD;
+			}
+
+			if (error <= 0.001f)
+			{
+				System.out.println(String.format("\n\tTotal Error <0.001 @ epoch %d", i));
+				break;
+			}
+		}
 	}
 }
