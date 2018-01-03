@@ -1,3 +1,5 @@
+import java.io.File;
+
 /**
  * Created by duffy on 02.01.2018.
  */
@@ -12,6 +14,5 @@ class setup
 		int[] shape = new int[]{784, 16, 16, 10};
 		n.setupNetwork(shape);
 		//n.start(1000, 1, 0.03f);
-		// For more information see network.java (and all the other classes too)
 	}
-}
+} // For more information see network.java (and all the other classes too)

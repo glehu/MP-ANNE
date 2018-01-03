@@ -1,4 +1,9 @@
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Random;
 
 import static java.lang.Math.abs;
 
@@ -217,4 +222,20 @@ class network
 			}
 		}
 	}
+
+	BufferedImage randomImage(File dir)
+	{
+		BufferedImage img = null;
+		File[] files = dir.listFiles();
+		Random rand = new Random();
+		assert files != null;
+		try
+		{
+			img = ImageIO.read(files[rand.nextInt(files.length)]);
+		} catch (IOException ignored) {}
+
+		return img;
+	}
+
+
 }
