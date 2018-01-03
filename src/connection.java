@@ -6,9 +6,14 @@ import java.util.Random;
 
 class connection
 {
-	private neuron from, to;
+	neuron from, to;
 
 	float weight;
+
+	// Backward Propagation stuff
+	float errorD; 		// Error derivative w/ respect to this connection's weight
+	float errorD_total; // Total error derivative
+	float numErrorD;	// Number of error derivatives
 
 	connection(neuron from, neuron to)
 	{

@@ -12,6 +12,7 @@ class main
 		int[] shape = new int[]{2, 1};
 		n.setupNetwork(shape);
 		n.feedForward();
+		n.backProp(1);
 		// For more information see network.java (and all the other classes too)
 	}
 }

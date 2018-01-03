@@ -39,7 +39,7 @@ class network
 				{
 					n = new neuron(i, j, 1);
 					System.out.println(String.format("\t\tINPUT  (%d/%d) added. (Value: %f)",
-							n.layer, n.pos, n.value));
+							n.layer, n.pos, n.totalInput));
 				} else if (i == layers - 1) // Last layer -> Output neuron
 				{
 					n = new neuron(i, j, true);
@@ -84,6 +84,64 @@ class network
 			for (neuron n : aNetwork)
 			{
 				n.feedForward();
+			}
+		}
+	}
+
+	// Backward Propagation
+	// Here, the error of the neurons and connections are calculated and the weights get updated
+	// TODO: Update the neurons' bias
+	void backProp(float target)
+	{
+		System.out.println(String.format("\n>>> backProp(%f)\n", target));
+
+		// Calculating the error of the output neurons
+		for(int outputneurons = 0; outputneurons < network[network.length-1].length; outputneurons++)
+		{
+			neuron n = network[network.length-1][outputneurons];
+
+			n.outputD = target - n.output;
+			System.out.println(String.format("\tOutput Neuron (%d/%d) ERROR = %+f",
+					n.layer, n.pos, n.outputD));
+		}
+
+		for(int i = network.length - 1; i >= 1; i--)
+		{
+			// Node input error derivatives
+			for(int j = 0; j < network[i].length; j++)
+			{
+				neuron n = network[i][j];
+
+				n.inputD = n.outputD * n.relu(true);
+				n.inputD_total += n.inputD;
+				n.numInputD++;
+			}
+
+			// Connection error derivatives
+			for(int j = 0; j < network[i].length; j++)
+			{
+				neuron n = network[i][j];
+				for(connection c : n.in)
+				{
+					c.errorD = n.inputD * c.from.output;
+					c.errorD_total += c.errorD;
+					c.numErrorD++;
+				}
+			}
+
+			// Error derivative with respect to each node's output.
+			if(i == 1) // Input neurons don't need to calculate the error (they can't be "wrong")
+			{
+				continue;
+			}
+			neuron[] prevLayer = network[i-1];
+			for (neuron n : prevLayer)
+			{
+				n.outputD = 0;
+				for (connection c : n.out)
+				{
+					n.outputD += c.weight * c.to.inputD;
+				}
 			}
 		}
 	}
