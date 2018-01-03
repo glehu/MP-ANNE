@@ -18,7 +18,7 @@ class network
 	// Creates a network of neurons and connections, with a user defined shape of the network (see network())
 	void setupNetwork(int[] shape)
 	{
-		System.out.println(String.format(">>> setupNetwork(%s)\n", Arrays.toString(shape)));
+		System.out.printf(">>> setupNetwork(%s)\n\n", Arrays.toString(shape));
 
 		int numNeurons = 0; // Total neurons in the network
 		int numConnections = 0; // Total connections
@@ -32,7 +32,7 @@ class network
 		for (int i = 0; i < layers; i++) // Layers
 		{
 			int neurons = shape[i];
-			System.out.println(String.format("\tLayer %d: %d Neurons", i, neurons));
+			System.out.printf("\tLayer %d: %d Neurons\n", i, neurons);
 			network[i] = new neuron[neurons];
 
 			for (int j = 0; j < neurons; j++) // Filling the layers
@@ -40,16 +40,16 @@ class network
 				if (i == 0) // First layer -> Input neuron
 				{
 					n = new neuron(i, j, true, false);
-					System.out.println(String.format("\t\tINPUT  (%d/%d) added. (Value: %f)",
-							n.layer, n.pos, n.totalInput));
+					System.out.printf("\t\tINPUT  (%d/%d) added. (Value: %f)\n",
+							n.layer, n.pos, n.totalInput);
 				} else if (i == layers - 1) // Last layer -> Output neuron
 				{
 					n = new neuron(i, j, false, true);
-					System.out.println(String.format("\t\tOUTPUT (%d/%d) added.", n.layer, n.pos));
+					System.out.printf("\t\tOUTPUT (%d/%d) added.\n", n.layer, n.pos);
 				} else // Layer(s) between first and last -> Hidden neuron
 				{
 					n = new neuron(i, j, false, false);
-					System.out.println(String.format("\t\tHIDDEN (%d/%d) added.", n.layer, n.pos));
+					System.out.printf("\t\tHIDDEN (%d/%d) added.\n", n.layer, n.pos);
 				}
 
 				network[i][j] = n; // Adding the neuron to the network
@@ -66,14 +66,14 @@ class network
 						previous.out.add(c);
 						n.in.add(c);
 
-						System.out.println(String.format("\t\t\t(%d/%d) connected to (%d/%d) with weight %+f",
-								previous.layer, previous.pos, n.layer, n.pos, c.weight));
+						System.out.printf("\t\t\t(%d/%d) connected to (%d/%d) with weight %+f\n",
+								previous.layer, previous.pos, n.layer, n.pos, c.weight);
 					}
 				}
 			}
 		}
-		System.out.println(String.format("\n\tTotal neurons:\t\t%,d\n\tTotal connections:\t%,d\n",
-				numNeurons, numConnections));
+		System.out.printf("\n\tTotal neurons:\t\t%,d\n\tTotal connections:\t%,d\n\n",
+				numNeurons, numConnections);
 	}
 
 	// Passes the values of the input neurons to the connected neurons with respect of the connections' weight
@@ -94,9 +94,9 @@ class network
 	private void backProp(float truth)
 	{
 		// Calculating the error of the output neurons
-		for (int outputneurons = 0; outputneurons < network[network.length - 1].length; outputneurons++)
+		for (int outputNeurons = 0; outputNeurons < network[network.length - 1].length; outputNeurons++)
 		{
-			neuron n = network[network.length - 1][outputneurons];
+			neuron n = network[network.length - 1][outputNeurons];
 
 			n.outputD = truth - n.output;
 		}
@@ -193,24 +193,22 @@ class network
 			for (int out = 0; out < network[network.length - 1].length; out++)
 			{
 				neuron n = network[network.length - 1][out];
-				System.out.println(String.format("\n(%d/%d) ERROR: %+f", n.layer, n.pos, n.outputD));
-				System.out.println(String.format("Output %+f", n.output));
+				System.out.printf("\n(%d/%d) ERROR: %+f\nOutput %+f\n", n.layer, n.pos, n.outputD, n.output);
 
 				error += n.outputD;
 			}
 
 			if (abs(error) <= 0.001f)
 			{
-				System.out.println(String.format("\n\n\tTotal Error <0.001 @ epoch %d", i));
+				System.out.printf("\n\n\tTotal Error <0.001 @ epoch %d\n", i);
 				for (int out = 0; out < network[network.length - 1].length; out++)
 				{
 					neuron n = network[network.length - 1][out];
-					System.out.println(String.format("\n\t(%d/%d) ERROR: %+f", n.layer, n.pos, n.outputD));
-					System.out.println(String.format("\tACTUAL: %+f TRUTH: %+f", n.output, truth));
-					System.out.println(String.format("\tBIAS: %+f", n.bias));
+					System.out.printf("\n\t(%d/%d) ERROR: %+f\n\tACTUAL: %+f TRUTH: %+f\n\tBIAS: %+f\n",
+							n.layer, n.pos, n.outputD, n.output, truth, n.bias);
 					for (connection c : n.in)
 					{
-						System.out.println(String.format("\tWEIGHT: %+f", c.weight));
+						System.out.printf("\tWEIGHT: %+f\n", c.weight);
 					}
 
 					error += n.outputD;
