@@ -1,5 +1,7 @@
 import java.util.Arrays;
 
+import static java.lang.Math.abs;
+
 /**
  * Created by duffy on 02.01.2018.
  */
@@ -213,9 +215,22 @@ class network
 				error += n.outputD;
 			}
 
-			if (error <= 0.001f)
+			if (abs(error) <= 0.001f)
 			{
-				System.out.println(String.format("\n\tTotal Error <0.001 @ epoch %d", i));
+				System.out.println(String.format("\n\n\tTotal Error <0.001 @ epoch %d", i));
+				for (int out = 0; out < network[network.length - 1].length; out++)
+				{
+					neuron n = network[network.length - 1][out];
+					System.out.println(String.format("\n\t(%d/%d) ERROR: %+f", n.layer, n.pos, n.outputD));
+					System.out.println(String.format("\tACTUAL: %+f TRUTH: %+f", n.output, truth));
+					System.out.println(String.format("\tBIAS: %+f", n.bias));
+					for(connection c : n.in)
+					{
+						System.out.println(String.format("\tWEIGHT: %+f", c.weight));
+					}
+
+					error += n.outputD;
+				}
 				break;
 			}
 		}
