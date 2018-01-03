@@ -91,16 +91,16 @@ class network
 	// Backward Propagation
 	// Here, the error of the neurons and connections are calculated and the weights get updated
 	// TODO: Update the neurons' bias
-	void backProp(float target)
+	void backProp(float truth)
 	{
-		System.out.println(String.format("\n>>> backProp(%f)\n", target));
+		System.out.println(String.format("\n>>> backProp(%f)\n", truth));
 
 		// Calculating the error of the output neurons
 		for(int outputneurons = 0; outputneurons < network[network.length-1].length; outputneurons++)
 		{
 			neuron n = network[network.length-1][outputneurons];
 
-			n.outputD = target - n.output;
+			n.outputD = truth - n.output;
 			System.out.println(String.format("\tOutput Neuron (%d/%d) ERROR = %+f",
 					n.layer, n.pos, n.outputD));
 		}
@@ -144,5 +144,14 @@ class network
 				}
 			}
 		}
+	}
+
+	// Update the connections' weights to approach (truth - actual = 0) => Learning process
+	// The learningRate describes how strong the weights' adjustment is.
+	// It is recommended to use a higher learningRate at the beginning that decreases with each epoch.
+	// This allows for a rapid leaning process at the beginning and fine adjustments at the end.
+	void updateWeights(float learningRate)
+	{
+		
 	}
 }
