@@ -12,6 +12,9 @@ class neuron
 	float output;
 	float bias;
 
+	float inv_totalInput;
+	float inv_output;
+
 	// Backward Propagation stuff
 	float outputD;      // Error derivative w/ respect to node output
 	float inputD;       // Error derivative w/ respect to node input
@@ -57,6 +60,16 @@ class neuron
 			totalInput += c.weight * c.from.output;
 		}
 		output = relu(false, totalInput);
+	}
+
+	void inv_calculate()
+	{
+		inv_totalInput = bias;
+		for(connection c : out)
+		{
+			inv_totalInput += c.weight * c.to.inv_output;
+		}
+		inv_output = relu(false, inv_totalInput);
 	}
 }
 

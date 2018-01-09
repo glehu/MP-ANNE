@@ -1,5 +1,8 @@
 import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -11,13 +14,15 @@ import static java.lang.Math.abs;
  * Created by duffy on 02.01.2018.
  */
 
-class network
+class network extends JPanel
 {
 	private neuron[][] network; // List of neurons in the network [#layers][#neurons per layer]
 
 	public network()
 	{
 		System.out.println(">>> network()\n");
+
+		setupFrame();
 	}
 
 	// Creates a network of neurons and connections, with a user defined shape of the network (see network())
@@ -105,7 +110,7 @@ class network
 
 			if(n.pos == truth)
 			{
-				n.outputD = truth - n.output;
+				n.outputD = 1 - n.output;
 			} else
 			{
 				n.outputD = 0 - n.output;
@@ -211,7 +216,6 @@ class network
 			backProp(truth);
 			updateWeights(learningRate);
 
-
 			for (int out = 0; out < network[network.length - 1].length; out++)
 			{
 				neuron n = network[network.length - 1][out];
@@ -232,7 +236,7 @@ class network
 
 					if(n.pos == truth)
 					{
-						truth_ = truth;
+						truth_ = 1;
 					} else
 					{
 						truth_ = 0;
@@ -242,7 +246,8 @@ class network
 							n.layer, n.pos, n.outputD, n.output, truth_, n.bias);
 				}
 
-				System.out.printf("\n\n\tTotal Error <0.001 @ epoch %d\n", i);
+				System.out.printf("\n\n\tTotal Error <%f @ epoch %d\n", error_aim, i);
+				prediction(truth);
 				break;
 			}
 
@@ -273,5 +278,61 @@ class network
 		return img;
 	}
 
+	private JFrame frame = new JFrame();
 
+	private void setupFrame()
+	{
+		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		frame.setSize(500,500);
+		frame.setLocation(1000,1000);
+		frame.setTitle("PREDICTION");
+	}
+
+	private void prediction(float truth)
+	{
+		BufferedImage prediction = new BufferedImage(28, 28, BufferedImage.TYPE_INT_RGB);
+		int[] matrix = ((DataBufferInt) prediction.getRaster().getDataBuffer()).getData();
+
+		for (int outputNeurons = 0; outputNeurons < network[network.length - 1].length; outputNeurons++)
+		{
+			neuron n = network[network.length - 1][outputNeurons];
+
+			if(n.pos == truth)
+			{
+				n.inv_output = 1;
+			} else
+			{
+				n.inv_output = 0;
+			}
+		}
+
+		for (int i = network.length - 1; i >= 0; i--)
+		{
+			for (int j = 0; j < network[i].length; j++)
+			{
+				neuron n = network[i][j];
+
+				n.inv_calculate();
+			}
+		}
+
+		for(neuron n : network[0])
+		{
+			int x = n.pos % 28;
+			int y = n.pos / 28;
+
+			matrix[x + y * 28] = (int)(abs(n.inv_output)*255);
+		}
+
+		Image prediction_scaled = prediction.getScaledInstance(448,448, Image.SCALE_SMOOTH);
+		JLabel label = new JLabel(new ImageIcon(prediction_scaled));
+
+		frame.getContentPane().add(label);
+		frame.setVisible(true);
+
+		label.removeAll();
+		label.updateUI();
+
+
+	}
 }

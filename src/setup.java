@@ -20,6 +20,6 @@ class setup
 			System.exit(1);
 		}
 
-		n.learn(1000, 3, 0.03f, 0.1f, ordner);
+		n.learn(1000, 3, 0.03f, 0.001f, ordner);
 	}
 } // For more information see network.java (and all the other classes too)
