@@ -18,14 +18,12 @@ class neuron
 	float inputD_total; // Total error derivative 	   w/ respect to node input
 	float numInputD;    // Number of error derivatives w/ respect to node input
 
-	boolean is_input, is_output;
-
 	int layer; // X
 	int pos;   // Y
 
 	// -------------------------------------------
 
-	neuron(int layer, int pos, boolean is_input, boolean is_output)
+	neuron(int layer, int pos)
 	{
 		this.in  = new ArrayList<>();
 		this.out = new ArrayList<>();
@@ -33,9 +31,6 @@ class neuron
 		this.totalInput = 0;
 		this.output 	= 0;
 		this.bias 		= 0.1f;
-
-		this.is_input  = is_input;
-		this.is_output = is_output;
 
 		this.layer = layer;
 		this.pos   = pos;

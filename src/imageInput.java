@@ -7,13 +7,14 @@ import java.awt.image.DataBufferInt;
  */
 
 // Simple image input: every pixel is an input
-public class imageinput {
+public class imageInput
+{
 
 	private final int w, h;
 	private final BufferedImage img;
 	private final imgaccess access;
 
-	public imageinput(BufferedImage img) {
+	imageInput(BufferedImage img) {
 		this.img = img;
 
 		switch (img.getType()) {

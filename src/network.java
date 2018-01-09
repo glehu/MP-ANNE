@@ -44,16 +44,16 @@ class network
 			{
 				if (i == 0) // First layer -> Input neuron
 				{
-					n = new neuron(i, j, true, false);
+					n = new neuron(i, j);
 					System.out.printf("\t\tINPUT  (%d/%d) added. (Value: %f)\n",
 							n.layer, n.pos, n.totalInput);
 				} else if (i == layers - 1) // Last layer -> Output neuron
 				{
-					n = new neuron(i, j, false, true);
+					n = new neuron(i, j);
 					System.out.printf("\t\tOUTPUT (%d/%d) added.\n", n.layer, n.pos);
 				} else // Layer(s) between first and last -> Hidden neuron
 				{
-					n = new neuron(i, j, false, false);
+					n = new neuron(i, j);
 					System.out.printf("\t\tHIDDEN (%d/%d) added.\n", n.layer, n.pos);
 				}
 
@@ -103,7 +103,13 @@ class network
 		{
 			neuron n = network[network.length - 1][outputNeurons];
 
-			n.outputD = truth - n.output;
+			if(n.pos == truth)
+			{
+				n.outputD = truth - n.output;
+			} else
+			{
+				n.outputD = 0 - n.output;
+			}
 		}
 
 		for (int i = network.length - 1; i >= 1; i--)
@@ -185,45 +191,66 @@ class network
 		}
 	}
 
-	void start(int epochs, float truth, float learningRate)
+	void learn(int epochs, float truth, float learningRate, float error_aim, File dir)
 	{
 		for (int i = 0; i < epochs; i++)
 		{
+			// Create imageInput object to return every pixel from the image for the input neurons
+			imageInput ip = new imageInput(randomImage(dir));
+
+			// Set Input values
+			neuron[] inputNeuron = network[0]; // Array of input neurons
+			for(neuron n : inputNeuron)
+			{
+				n.totalInput = ip.getInput(n.pos);
+			}
+
 			float error = 0;
 
 			feedForward();
 			backProp(truth);
 			updateWeights(learningRate);
 
+
 			for (int out = 0; out < network[network.length - 1].length; out++)
 			{
 				neuron n = network[network.length - 1][out];
-				System.out.printf("\n(%d/%d) ERROR: %+f\nOutput %+f\n", n.layer, n.pos, n.outputD, n.output);
+				//System.out.printf("\n(%d/%d) ERROR: %+f\nOutput %+f\n", n.layer, n.pos, n.outputD, n.output);
 
-				error += n.outputD;
+				error += abs(n.outputD);
 			}
 
-			if (abs(error) <= 0.001f)
+
+			// If total error is below threshold exit learning process
+			if (abs(error) <= error_aim)
 			{
-				System.out.printf("\n\n\tTotal Error <0.001 @ epoch %d\n", i);
+				float truth_;
+
 				for (int out = 0; out < network[network.length - 1].length; out++)
 				{
 					neuron n = network[network.length - 1][out];
-					System.out.printf("\n\t(%d/%d) ERROR: %+f\n\tACTUAL: %+f TRUTH: %+f\n\tBIAS: %+f\n",
-							n.layer, n.pos, n.outputD, n.output, truth, n.bias);
-					for (connection c : n.in)
+
+					if(n.pos == truth)
 					{
-						System.out.printf("\tWEIGHT: %+f\n", c.weight);
+						truth_ = truth;
+					} else
+					{
+						truth_ = 0;
 					}
 
-					error += n.outputD;
+					System.out.printf("\n\t(%d/%d) ERROR: %+f\n\tACTUAL: %+f TRUTH: %+f\n\tBIAS: %+f\n",
+							n.layer, n.pos, n.outputD, n.output, truth_, n.bias);
 				}
+
+				System.out.printf("\n\n\tTotal Error <0.001 @ epoch %d\n", i);
 				break;
 			}
+
+			System.out.printf("Epoch %d/%d \tTOTAL ERROR: %f\n\n", i, epochs, error);
 		}
 	}
 
-	BufferedImage randomImage(File dir)
+	private BufferedImage randomImage(File dir)
 	{
 		BufferedImage img = null;
 		File[] files = dir.listFiles();
@@ -231,8 +258,17 @@ class network
 		assert files != null;
 		try
 		{
-			img = ImageIO.read(files[rand.nextInt(files.length)]);
-		} catch (IOException ignored) {}
+			File image = files[rand.nextInt(files.length)];
+			System.out.println(image);
+			if (image.isDirectory())
+			{
+				return randomImage(dir);
+			}
+			img = ImageIO.read(image);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(2);
+		}
 
 		return img;
 	}

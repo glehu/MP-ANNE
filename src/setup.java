@@ -13,6 +13,13 @@ class setup
 		// E.g. {1, 2, 1} 1 input neuron 2 neurons in 1st hidden layer 1 output neuron
 		int[] shape = new int[]{784, 16, 16, 10};
 		n.setupNetwork(shape);
-		//n.start(1000, 1, 0.03f);
+		File ordner = new File("C:\\Users\\duffy\\Desktop\\training\\3"); // Path to training data
+		if (!ordner.exists() || !ordner.isDirectory())
+		{
+			System.err.println("No folder @ " + ordner);
+			System.exit(1);
+		}
+
+		n.learn(1000, 3, 0.03f, 0.1f, ordner);
 	}
 } // For more information see network.java (and all the other classes too)
