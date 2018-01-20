@@ -1,3 +1,5 @@
+package com.glehu.mpanne;
+
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
@@ -7,14 +9,14 @@ import java.awt.image.DataBufferInt;
  */
 
 // Simple image input: every pixel is an input
-public class imageInput
+public class ImageInput
 {
 
 	private final int w, h;
 	private final BufferedImage img;
 	private final imgaccess access;
 
-	imageInput(BufferedImage img) {
+	ImageInput(BufferedImage img) {
 		this.img = img;
 
 		switch (img.getType()) {

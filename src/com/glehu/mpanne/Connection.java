@@ -1,12 +1,14 @@
+package com.glehu.mpanne;
+
 import java.util.Random;
 
 /**
  * Created by duffy on 02.01.2018.
  */
 
-class connection
+class Connection
 {
-	neuron from, to;
+	Neuron from, to;
 
 	float weight;
 
@@ -15,12 +17,13 @@ class connection
 	float errorD_total; // Total error derivative
 	float numErrorD;	// Number of error derivatives
 
-	connection(neuron from, neuron to)
+	Random rand = new Random();
+
+	Connection(Neuron from, Neuron to)
 	{
 		this.from = from;
 		this.to   = to;
 
-		Random rand = new Random();
 		this.weight = rand.nextFloat() * (1 - -1) + -1; // Random weight between -1 and 1
 	}
 }

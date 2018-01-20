@@ -1,19 +1,20 @@
+package com.glehu.mpanne;
+
 import java.util.ArrayList;
 
 /**
  * Created by duffy on 02.01.2018.
  */
 
-class neuron
+class Neuron
 {
-	ArrayList<connection> in, out;
+	ArrayList<Connection> in, out;
 
 	float totalInput;
 	float output;
 	float bias;
 
-	float inv_totalInput;
-	float inv_output;
+	private float inv_output;
 
 	// Backward Propagation stuff
 	float outputD;      // Error derivative w/ respect to node output
@@ -26,7 +27,7 @@ class neuron
 
 	// -------------------------------------------
 
-	neuron(int layer, int pos)
+	Neuron(int layer, int pos)
 	{
 		this.in  = new ArrayList<>();
 		this.out = new ArrayList<>();
@@ -45,7 +46,13 @@ class neuron
 	{
 		if (derivative)
 		{
-			return 1;
+			if(value > 0)
+			{
+				return 1;
+			} else
+			{
+				return 0;
+			}
 		} else
 		{
 			return Math.max(0, value);
@@ -55,7 +62,7 @@ class neuron
 	void calculate()
 	{
 		totalInput = bias;
-		for(connection c : in)
+		for(Connection c : in)
 		{
 			totalInput += c.weight * c.from.output;
 		}
@@ -64,8 +71,8 @@ class neuron
 
 	void inv_calculate()
 	{
-		inv_totalInput = bias;
-		for(connection c : out)
+		float inv_totalInput = bias;
+		for(Connection c : out)
 		{
 			inv_totalInput += c.weight * c.to.inv_output;
 		}
